@@ -47,7 +47,7 @@ class RoutesTestCase(TransactionTestCase):
 
         for row in cursor.fetchall():
             if not row[0].startswith('pg_') and row[0] not in do_not_delete:
-                print("Deleting schema %s" % row[0])
+                print(("Deleting schema %s" % row[0]))
                 cursor.execute('DROP SCHEMA %s CASCADE' % row[0])
 
         Tenant.objects.all().delete()
