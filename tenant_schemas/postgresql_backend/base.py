@@ -1,13 +1,12 @@
 import re
 import warnings
 from django.conf import settings
-from django.utils.importlib import import_module
 from django.core.exceptions import ImproperlyConfigured
 from tenant_schemas.utils import get_public_schema_name
-
-ORIGINAL_BACKEND = getattr(settings, 'ORIGINAL_BACKEND', 'django.db.backends.postgresql_psycopg2')
-
-original_backend = import_module('.base', ORIGINAL_BACKEND)
+from django.db.backends.postgresql_psycopg2.base import \
+    DatabaseWrapper as OriginalDatabaseWrapper
+from django.db.backends.postgresql_psycopg2.base import DatabaseError, \
+    IntegrityError
 
 EXTRA_SEARCH_PATHS = getattr(settings, 'PG_EXTRA_SEARCH_PATHS', [])
 
@@ -20,7 +19,7 @@ def _check_identifier(identifier):
         raise RuntimeError("Invalid string used for the schema name.")
 
 
-class DatabaseWrapper(original_backend.DatabaseWrapper):
+class DatabaseWrapper(OriginalDatabaseWrapper):
     """
     Adds the capability to manipulate the search_path using set_tenant and set_schema_name
     """
@@ -102,5 +101,5 @@ class FakeTenant:
     def __init__(self, schema_name):
         self.schema_name = schema_name
 
-DatabaseError = original_backend.DatabaseError
-IntegrityError = original_backend.IntegrityError
+DatabaseError = DatabaseError
+IntegrityError = IntegrityError
