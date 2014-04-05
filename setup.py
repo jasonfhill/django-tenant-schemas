@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from os.path import exists
-from version import get_git_version
+from .version import get_git_version
 try:
     from setuptools import setup
 except ImportError:
